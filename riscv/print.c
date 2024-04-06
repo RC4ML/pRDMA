@@ -5,9 +5,6 @@
 
 static char* cur_print_end = &_print_start;
 
-char _print_init_str[] __attribute__((section(".print_init"))) = "Hello, print address!\n";
-ct_assert(sizeof(_print_init_str)<32);// 
-
 void _inc_string_num(uint num){
 	uint tmp;
 	ReadCSR(CSR_PRINT_STRING_NUM, tmp);
@@ -29,9 +26,6 @@ void _reset_print_status(){
 
 void _print_init(){
 	_reset_print_status();
-	int length = sizeof(_print_init_str);
-	_inc_string_length(length);
-	_inc_string_num(1);
 	WriteCSR(CSR_PRINT_ADDR, &_print_start);
 }
 

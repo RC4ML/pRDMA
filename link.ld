@@ -51,10 +51,6 @@ SECTIONS
 	_print_start = .;
 	_print_end = . + _print_size;
 
-	.print_init : {
-		*(.print_init)
-	} > RAM_PRINT
-	
 	. = ALIGN(8); # 8 Bytes
     _end = .;
 	
