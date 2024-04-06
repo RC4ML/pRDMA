@@ -1,10 +1,14 @@
 ENTRY(_start)
 
-_code_size = 0x1000;/*4K=0x1000*/
-_text_size = 0x1000;
+/* 0-8K		Inst BRAM */
+_code_size = 0x2000;/*4K=0x1000*/
 
+/* 8-24K		Data BRAM */
+_text_size = 0x1000;
 _stack_size = 0x1000;
-_heap_size = 0x1000;
+_heap_size = 0x2000;
+
+/* 24k-~		HBM */
 _print_size = 0x1000;
 
 
