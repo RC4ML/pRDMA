@@ -21,20 +21,17 @@ dev_target = dev_main
 all : $(dev_target) $(target_example_rx) $(target_example_tx)
 
 #user targets
-example_tx_src += ${dev_src}
-example_tx_src += protocols/example/example.c
-example_tx_src += protocols/example/example_tx.c
+example_tx_macro = -D TX -D EXAMPLE
+example_rx_macro = -D RX -D EXAMPLE
+example_src += ${dev_src}
+example_src += protocols/example/example.c
+example_src += protocols/example/example_main.c
 
-$(target_example_tx) : $(example_tx_src) 
-	$(dev_cc) -o $(BUILD_DIR)/$(target_example_tx) $(dev_cflags) $(example_tx_src) $(dev_lib_flags) -I$(inc_dir)
+$(target_example_tx) : $(example_src) 
+	$(dev_cc) $(example_tx_macro) -o $(BUILD_DIR)/$(target_example_tx) $(dev_cflags) $(example_src) $(dev_lib_flags) -I$(inc_dir)
 
-
-example_rx_src += ${dev_src}
-example_rx_src += protocols/example/example.c
-example_rx_src += protocols/example/example_rx.c
-
-$(target_example_rx) : $(example_rx_src) 
-	$(dev_cc) -o $(BUILD_DIR)/$(target_example_rx) $(dev_cflags) $(example_rx_src) $(dev_lib_flags) -I$(inc_dir)
+$(target_example_rx) : $(example_src) 
+	$(dev_cc) $(example_rx_macro) -o $(BUILD_DIR)/$(target_example_rx) $(dev_cflags) $(example_src) $(dev_lib_flags) -I$(inc_dir)
 
 
 #test target

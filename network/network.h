@@ -4,8 +4,14 @@
 #include "riscv/misc.h"
 #include "riscv/encoding.h"
 #include "riscv/recursive_macro.h"
-#include "protocols/example/example.h"
 
+#if defined EXAMPLE
+	#include "protocols/example/example.h"
+#elif defined DCQCN
+	#include "protocols/dcqcn/dcqcn.h"
+#else
+	#include "protocols/example/example.h"
+#endif
 
 typedef enum{
 	reserve0 = 0x0,
