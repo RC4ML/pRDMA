@@ -1,7 +1,7 @@
 ENTRY(_start)
 
 /* 0-8K		Inst BRAM */
-_code_size = 0x2000;/*4K=0x1000*/
+_code_size = 0x4000;/*4K=0x1000*/
 
 /* 8-24K		Data BRAM */
 _text_size = 0x1000;
@@ -31,6 +31,7 @@ SECTIONS
 	} > ROM
 
     .data : ALIGN(16){
+		*(.rodata*)
         *(.data)
 		*(.sdata)
     } > RAM_TEXT
