@@ -1,10 +1,20 @@
-#include "misc.h"
+#include "riscv/misc.h"
+#include "network/network.h"
 
 int global_x;
 int global_y = 0;
 int global_z = 100;
 
 void main() {
+	int regValue = 1;
+	WriteCSR(0x90,2);
+
+	regValue = SwapCSR(0x90,regValue);
+
+	int v = ReadCSR(0x90);
+	print("regValue:%d\n",regValue);
+	print("csr:%d\n",v);
+
 	print("123");
 	print("456");
 	print("789");
@@ -15,6 +25,14 @@ void main() {
 	char buffer[128];
     sprint(buffer, "Decimal:%d, hex:%x, HEX:%X\n", 0xF0000000, 0x80000000, 42);
 	print(buffer);
+	print("%d\n", __builtin_offsetof(Event,table.credit));
+	update_table(credit, 1);
+	update_table(rate, 2);
+	update_table(timer, 3);
+
+	print("cycle:%d\n",GetTime());
+	print("cycle:%d\n",GetTime());
+	print("cycle:%d\n",GetTime());
 
 	void* ret = alloc(100);
 	global_x = 10;

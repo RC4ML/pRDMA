@@ -6,15 +6,13 @@
 static char* cur_print_end = &_print_start;
 
 void _inc_string_num(uint num){
-	uint tmp;
-	ReadCSR(CSR_PRINT_STRING_NUM, tmp);
+	uint tmp = ReadCSR(CSR_PRINT_STRING_NUM);
 	WriteCSR(CSR_PRINT_STRING_NUM, tmp+num);
 }
 
 /*Length would include the zero in the string tail*/ 
 void _inc_string_length(int length){
-	uint tmp;
-	ReadCSR(CSR_PRINT_STRING_LEN, tmp);
+	uint tmp = ReadCSR(CSR_PRINT_STRING_LEN);
 	WriteCSR(CSR_PRINT_STRING_LEN, tmp+length);
 	cur_print_end += length;
 }
@@ -192,10 +190,10 @@ void sprint(char* buffer, const char* format, ...){
 uint dump_values[0x100-DUMP_START];
 
 #define DUMP_CSR(csr)\
-	ReadCSR(csr,dump_values[csr-DUMP_START])
+	dump_values[csr-DUMP_START] = ReadCSR(csr)
 
-#define PRINT_CSR(csr, name)\
-	print("%s:%X\n",name,dump_values[csr-DUMP_START]);
+#define PRINT_CSR(csr)\
+	print("%s:%X\n",#csr,dump_values[csr-DUMP_START]);
 
 
 void dump_csr(){
@@ -204,8 +202,8 @@ void dump_csr(){
 	DUMP_CSR(CSR_PRINT_STRING_LEN);
 	DUMP_CSR(CSR_TRAP);
 
-	PRINT_CSR(CSR_PRINT_ADDR, "print_addr");
-	PRINT_CSR(CSR_PRINT_STRING_NUM, "print_string_num");
-	PRINT_CSR(CSR_PRINT_STRING_LEN, "print_string_len");
-	PRINT_CSR(CSR_TRAP, "trap");
+	PRINT_CSR(CSR_PRINT_ADDR);
+	PRINT_CSR(CSR_PRINT_STRING_NUM);
+	PRINT_CSR(CSR_PRINT_STRING_LEN);
+	PRINT_CSR(CSR_TRAP);
 }

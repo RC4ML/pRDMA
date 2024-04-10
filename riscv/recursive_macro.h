@@ -143,5 +143,7 @@
     )
 #define REPEAT_INDIRECT() REPEAT
 
+#define REPEAT_MAX 40
+
 
 #endif
