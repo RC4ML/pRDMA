@@ -27,15 +27,25 @@ typedef uint Timer;
 	__asm__ volatile("csrrw %0, %1, %2" : "=r"(value) : "i"(csr), "r"(value): );\
 	value;})
 
+#define IncCSR(csr, value) WriteCSR(csr, ReadCSR(csr)+value);
+
 void* alloc(int size);
 void print(const char* format, ...);
 void sprint(char* buffer, const char* format, ...);
 void dump_csr();
-void trap(char* cause);
+void _trap(char* cause);
 
 #define ASSERT_CONCAT_(a, b) a##b
 #define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
 #define CompileTimeAssert(e) enum { ASSERT_CONCAT(assert_line_, __LINE__) = 1/(!!(e)) }
 
+#define trap(cause)\
+	WriteCSR(CSR_TRAP,1);\
+	dump_csr();\
+	print("Trap %s:%d %s\n",__FILE__, __LINE__, cause);\
+	__asm__ volatile("WFI");
+
+#define Assert(e) \
+	if(!(e)){trap("Assert fail:" #e );}
 
 #endif

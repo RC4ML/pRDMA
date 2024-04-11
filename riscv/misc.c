@@ -11,10 +11,3 @@ void* alloc(int size){
 		return (void*)(cur_heap_end-size);
 	}
 }
-
-void trap(char* cause){
-	WriteCSR(CSR_TRAP,1);
-	dump_csr();
-	print("Exception:%s\n",cause);
-	__asm__ volatile("WFI");
-}

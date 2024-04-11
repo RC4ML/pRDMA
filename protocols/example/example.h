@@ -3,7 +3,8 @@
 
 #include "riscv/misc.h"
 
-#define UserMetaSize 0
+#define UserTableSize 0
+#define UserPacketSize 0
 
 int recv();
 int send();

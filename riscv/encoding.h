@@ -8,10 +8,10 @@
 
 /*Input for core*/
 #define CSR_HAS_EVENT 0x90
-#define CSR_EVENT_COUNT 0x91
+#define CSR_RECEIVED_EVENT_COUNT 0x91
 
 /*Output for core*/
-#define CSR_CORE_EVENT_COUNT 0x92
+#define CSR_PROCESSED_EVENT_COUNT 0x92
 #define CSR_EVENT_TYPE 0x93
 
 #define CSR_PRINT_ADDR 0xF0

@@ -33,10 +33,10 @@ typedef enum{
 }PkgType;
 
 typedef enum {
-	GenTxEvent,
-	Send,
+	GenTxEvent,/*RX CC core use*/
+	Send,/*TX CC core use*/
 	LoopBack,
-	Drop,
+	Done,
 }EventType;
 
 typedef struct{
@@ -63,30 +63,72 @@ typedef struct{
 	EventType type;
 }Event;
 
-#define BaseMetaSize 6  /*CCTable:credit, rate, timer; PacketMeta: qpn, type, length*/
+#define BaseTableSize 3  /*CCTable:credit, rate, timer*/
+#define BasePacketSize 3 /*PacketMeta: qpn, type, length*/
 
 CompileTimeAssert(\
-	(BaseMetaSize+UserMetaSize)*sizeof(uint) == \
+	(BaseTableSize+BasePacketSize)*sizeof(uint) == \
 	(sizeof(CCTable)+sizeof(PacketMeta))\
 	);
 
-CompileTimeAssert(UserMetaSize<REPEAT_MAX);
+CompileTimeAssert((BaseTableSize+UserTableSize)*sizeof(uint) == sizeof(CCTable));
+CompileTimeAssert((BasePacketSize+UserPacketSize)*sizeof(uint) == sizeof(CCTable));
+
+CompileTimeAssert(BaseTableSize<REPEAT_MAX);
+CompileTimeAssert(BasePacketSize<REPEAT_MAX);
+CompileTimeAssert(UserTableSize<REPEAT_MAX);
+CompileTimeAssert(UserPacketSize<REPEAT_MAX);
 
 static uint event_count = 0;
 static inline void post_event(Event* e){
 	WriteCSR(CSR_EVENT_TYPE, e->type);
 	event_count++;
-	WriteCSR(CSR_CORE_EVENT_COUNT, event_count);
+	WriteCSR(CSR_PROCESSED_EVENT_COUNT, event_count);
 };
 
-CompileTimeAssert(BaseMetaSize<REPEAT_MAX);
+static inline void _write_to_csr_table(CCTable* table){
+	uint* p = (uint*)table;
+	#define ExpBase(i, _) WriteCSR(CSR_CCTABLE_START+i, p[i]);
+	EVAL(REPEAT(BaseTableSize, ExpBase, ~));
+	#define ExpUser(i, _) WriteCSR(CSR_CCTABLE_START+BaseTableSize+i, p[BaseTableSize+i]);
+	EVAL(REPEAT(UserTableSize, ExpUser, ~));
+	#undef ExpBase
+	#undef ExpUser
+}
 
-inline void _read_from_csr(Event* e){
-	uint* p = (uint*)e;
+static inline void _write_to_csr_packet(PacketMeta* packet){
+	uint* p = (uint*)packet;
+	#define ExpBase(i, _) WriteCSR(CSR_CCTABLE_START+sizeof(CCTable)+i, p[i]);
+	EVAL(REPEAT(BasePacketSize, ExpBase, ~));
+	#define ExpUser(i, _) WriteCSR(CSR_CCTABLE_START+sizeof(CCTable)+i, p[BasePacketSize+i]);
+	EVAL(REPEAT(UserPacketSize, ExpUser, ~));
+	#undef ExpBase
+	#undef ExpUser
+}
+
+static inline void _read_from_csr_table(CCTable* table){
+	uint* p = (uint*)table;
 	#define ExpBase(i, _) p[i]=ReadCSR(CSR_CCTABLE_START+i);
-	EVAL(REPEAT(BaseMetaSize, ExpBase, ~));
-	#define ExpUser(i, _) p[BaseMetaSize+i]=ReadCSR(CSR_CCTABLE_START+BaseMetaSize+i);
-	EVAL(REPEAT(UserMetaSize, ExpUser, ~));
+	EVAL(REPEAT(BaseTableSize, ExpBase, ~));
+	#define ExpUser(i, _) p[BaseTableSize+i]=ReadCSR(CSR_CCTABLE_START+BaseTableSize+i);
+	EVAL(REPEAT(UserTableSize, ExpUser, ~));
+	#undef ExpBase
+	#undef ExpUser
+}
+
+static inline void _read_from_csr_packet(PacketMeta* packet){
+	uint* p = (uint*)packet;
+	#define ExpBase(i, _) p[i]=ReadCSR(CSR_CCTABLE_START+sizeof(CCTable)+i);
+	EVAL(REPEAT(BasePacketSize, ExpBase, ~));
+	#define ExpUser(i, _) p[BasePacketSize+i]=ReadCSR(CSR_CCTABLE_START+sizeof(CCTable)+BasePacketSize+i);
+	EVAL(REPEAT(UserPacketSize, ExpUser, ~));
+	#undef ExpBase
+	#undef ExpUser
+}
+
+static inline void _read_from_csr(Event* e){
+	_read_from_csr_table(&(e->table));
+	_read_from_csr_packet(&(e->packet));
 }
 
 #define update_table(MEMBER, value) \

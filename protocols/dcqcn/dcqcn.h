@@ -6,17 +6,18 @@
 typedef struct{
 	uint slot1;
 	uint slot2;
-}ExampleUserSlots;
+}DcqcnUserSlots;
 
 typedef struct{
 	uint field1;
 	uint field2;
 	uint field3;
-}ExampleUserHeader;
+}DcqcnUserHeader;
 
-#define UserSlots ExampleUserSlots
-#define UserHeader ExampleUserHeader
+#define UserSlots DcqcnUserSlots
+#define UserHeader DcqcnUserHeader
 
-#define UserMetaSize 5
+#define UserTableSize 2
+#define UserPacketSize 3
 
 #endif

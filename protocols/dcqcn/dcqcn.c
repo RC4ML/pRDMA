@@ -17,7 +17,7 @@ int dcqcn_send(){
 				e.type = Send;
 				now = GetTime();
 			}else{
-				e.type = Drop;
+				e.type = Done;
 			}
 		}else if(has_data(e.packet.type)){
 			credit = e.table.rate*(GetTime() - e.table.timer) + e.table.credit;
@@ -71,7 +71,7 @@ int dcqcn_recv(){
 				}
 				update_table(rate, Rc);
 			}
-			e.type = Drop;
+			e.type = Done;
 			post_event(&e);
 		}else{
 			if(GetTime()-last_time >= 55){
