@@ -25,6 +25,7 @@ example_tx_macro = -D TX -D EXAMPLE
 example_rx_macro = -D RX -D EXAMPLE
 example_src += ${dev_src}
 example_src += network/simulation.c
+example_src += network/network.c
 example_src += protocols/example/example.c
 example_src += protocols/example/example_main.c
 

@@ -14,6 +14,13 @@
 #endif
 
 typedef enum{
+	READ_REQ = 0x00001000,
+	WRITE_REQ_WITH_DATA = 0x00000fc0,
+	READ_RESP_WITH_DATA = 0x0001e000,
+	ACK = 0x00020000,
+}EventPacketType;
+
+typedef enum{
 	reserve0 = 0x0,
     RC_WRITE_FIRST = 0x06,
     RC_WRITE_MIDDLE = 0x07,
@@ -155,5 +162,7 @@ static inline void poll_event_sync(Event* e){
 static inline int has_data(PkgType type){
 	return (RC_WRITE_FIRST<=type)&&(type<=RC_READ_RESP_ONLY);
 };
+
+void config_regs();
 
 #endif

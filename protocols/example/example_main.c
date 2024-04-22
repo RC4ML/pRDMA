@@ -4,6 +4,7 @@
 
 
 int main(){
+	config_regs();
 	#if defined TX
         send();
     #elif defined RX
