@@ -2,6 +2,7 @@
 #include "riscv/misc.h"
 #include "riscv/encoding.h"
 #include "network/network.h"
+#include "network/simulation.h"
 
 int send(){
 	Event e;
@@ -28,7 +29,8 @@ int recv(){
 		if(e.packet.type == RC_ACK){
 			update_table(credit, e.table.credit+e.packet.length);
 		}
-		e.type = Drop;
+		e.type = Done;
 		post_event(&e);
 	}
+	trap("End of recv");
 }
