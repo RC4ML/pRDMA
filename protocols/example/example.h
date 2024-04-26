@@ -6,7 +6,7 @@
 #define UserTableSize 0
 #define UserPacketSize 0
 
-#define TracedPackets (READ_REQ | WRITE_REQ_WITH_DATA | READ_RESP_WITH_DATA | ACK)
+#define TracedPackets ACK //(READ_REQ | WRITE_REQ_WITH_DATA | READ_RESP_WITH_DATA | ACK)
 
 int recv();
 int send();

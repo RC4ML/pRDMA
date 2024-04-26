@@ -9,7 +9,7 @@ int send(){
 	while(1){
 		poll_event_sync(&e);
 		if(has_data(e.packet.type)){
-			if(e.table.credit >= e.packet.length){
+			if(likely(e.table.credit >= e.packet.length)){
 				update_table(credit,e.table.credit-e.packet.length);
 				e.type = Send;
 			}else{
@@ -26,7 +26,7 @@ int recv(){
 	Event e;
 	while(1){
 		poll_event_sync(&e);
-		if(e.packet.type == RC_ACK){
+		if(likely(e.packet.type == RC_ACK)){
 			update_table(credit, e.table.credit+e.packet.length);
 		}
 		e.type = Done;

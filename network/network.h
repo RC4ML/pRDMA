@@ -86,11 +86,9 @@ CompileTimeAssert(BasePacketSize<REPEAT_MAX);
 CompileTimeAssert(UserTableSize<REPEAT_MAX);
 CompileTimeAssert(UserPacketSize<REPEAT_MAX);
 
-static uint event_count = 0;
 static inline void post_event(Event* e){
 	WriteCSR(CSR_EVENT_TYPE, e->type);
-	event_count++;
-	WriteCSR(CSR_PROCESSED_EVENT_COUNT, event_count);
+	WriteCSRI(CSR_PROCESSED_EVENT_COUNT, 1);
 };
 
 static inline void _write_to_csr_table(CCTable* table){
