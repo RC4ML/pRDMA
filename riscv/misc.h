@@ -30,6 +30,10 @@ typedef uint Timer;
 	__asm__ volatile("csrrw %0, %1, %2" : "=r"(value) : "i"(csr), "r"(value): );\
 	value;})
 
+#define SwapCSRI(csr, value)({ uint __tmp;\
+	__asm__ volatile("csrrwi %0, %1, %2" : "=r"(__tmp) : "i"(csr), "i"(value): "memory");\
+	__tmp;})	
+
 #define IncCSR(csr, value) WriteCSR(csr, ReadCSR(csr)+value);
 
 #define likely(x) __builtin_expect(!!(x), 1) //gcc内置函数, 帮助编译器分支优化

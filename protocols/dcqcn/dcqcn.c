@@ -5,7 +5,7 @@
 
 #define BC_expires 100
 
-int dcqcn_send(){
+int send(){
 	Timer now = GetTime();
 	int credit;
 	Event e;
@@ -36,7 +36,7 @@ int dcqcn_send(){
 	}
 }
 
-int dcqcn_recv(){
+int recv(){
 	int Rt,Rc;
 	const int Rai = 1;
 	float a=1, g=0.5;

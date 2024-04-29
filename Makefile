@@ -16,9 +16,11 @@ dev_lib_flags = -nostdlib -lgcc
 
 target_example_tx = example_tx
 target_example_rx = example_rx
+target_dcqcn_tx = dcqcn_tx
+target_dcqcn_rx = dcqcn_rx
 dev_target = dev_main
 
-all : $(dev_target) $(target_example_rx) $(target_example_tx)
+all : $(dev_target) $(target_example_rx) $(target_example_tx) $(target_dcqcn_tx) $(target_dcqcn_rx)
 
 #user targets
 example_tx_macro = -D TX -D EXAMPLE
@@ -35,6 +37,21 @@ $(target_example_tx) : $(example_src)
 $(target_example_rx) : $(example_src) 
 	$(dev_cc) $(example_rx_macro) -o $(BUILD_DIR)/$(target_example_rx) $(dev_cflags) $(example_src) $(dev_lib_flags) -I$(inc_dir)
 
+
+#user targets
+dcqcn_tx_macro = -D TX -D DCQCN
+dcqcn_rx_macro = -D RX -D DCQCN
+dcqcn_src += ${dev_src}
+dcqcn_src += network/simulation.c
+dcqcn_src += network/network.c
+dcqcn_src += protocols/dcqcn/dcqcn.c
+dcqcn_src += protocols/dcqcn/dcqcn_main.c
+
+$(target_dcqcn_tx) : $(dcqcn_src) 
+	$(dev_cc) $(dcqcn_tx_macro) -o $(BUILD_DIR)/$(target_dcqcn_tx) $(dev_cflags) $(dcqcn_src) $(dev_lib_flags) -I$(inc_dir)
+
+$(target_dcqcn_rx) : $(dcqcn_src) 
+	$(dev_cc) $(dcqcn_rx_macro) -o $(BUILD_DIR)/$(target_dcqcn_rx) $(dev_cflags) $(dcqcn_src) $(dev_lib_flags) -I$(inc_dir)
 
 #test target
 target_test_src += ${dev_src}

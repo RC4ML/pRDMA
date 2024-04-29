@@ -73,13 +73,9 @@ typedef struct{
 #define BaseTableSize 3  /*CCTable:credit, rate, timer*/
 #define BasePacketSize 3 /*PacketMeta: qpn, type, length*/
 
-CompileTimeAssert(\
-	(BaseTableSize+BasePacketSize)*sizeof(uint) == \
-	(sizeof(CCTable)+sizeof(PacketMeta))\
-	);
 
 CompileTimeAssert((BaseTableSize+UserTableSize)*sizeof(uint) == sizeof(CCTable));
-CompileTimeAssert((BasePacketSize+UserPacketSize)*sizeof(uint) == sizeof(CCTable));
+CompileTimeAssert((BasePacketSize+UserPacketSize)*sizeof(uint) == sizeof(PacketMeta));
 
 CompileTimeAssert(BaseTableSize<REPEAT_MAX);
 CompileTimeAssert(BasePacketSize<REPEAT_MAX);
@@ -152,7 +148,7 @@ static inline int poll_event_async(Event* e){
 
 static inline void poll_event_sync(Event* e){
 	uint res = 0;
-	while(!SwapCSR(CSR_HAS_EVENT,res)){
+	while(!SwapCSRI(CSR_HAS_EVENT,0)){
 	}
 	_read_from_csr(e);
 };
