@@ -12,9 +12,12 @@ typedef unsigned int uint;
 
 typedef uint Timer;
 
-#define MicroSecond 100
+#define MicroSecond 1000/4
 
 #define GetTime() ReadCSR(CSR_MTIME)
+
+
+#define fxp_mult(a, b)     ((unsigned int)(((a * b) >> 16)))
 
 #define ReadCSR(csr)({ uint __tmp;\
 	__asm__ volatile("csrr %0, %1" : "=r"(__tmp) : "i"(csr) : "memory");\

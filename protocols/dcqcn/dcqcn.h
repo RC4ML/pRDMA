@@ -3,25 +3,25 @@
 
 #include "riscv/misc.h"
 
+
 typedef struct{
-	uint slot1;
-	uint slot2;
+    uint rate;
+    uint timer;
+	uint divede_rate;
 }DcqcnUserSlots;
 
 typedef struct{
-	uint field1;
-	uint field2;
-	uint field3;
-	uint field4;
+	uint ecn;
 }DcqcnUserHeader;
 
 #define UserSlots DcqcnUserSlots
 #define UserHeader DcqcnUserHeader
 
-#define UserTableSize 2
-#define UserPacketSize 4
+#define UserTableSize 3
+#define UserPacketSize 1
 
-#define TracedPackets ACK
+
+#define TracedPackets (WRITE_REQ_WITH_DATA | READ_RESP_WITH_DATA)
 
 int send();
 int recv();

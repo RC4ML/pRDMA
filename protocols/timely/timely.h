@@ -1,0 +1,27 @@
+#ifndef __TIMELY_H__
+#define __TIMELY_H__
+
+#include "riscv/misc.h"
+
+typedef struct{
+    uint rate;
+    uint timer;	
+	uint divede_rate;
+}TimelyUserSlots;
+
+typedef struct{
+	uint timestamp;
+}TimelyUserHeader;
+
+#define UserSlots TimelyUserSlots
+#define UserHeader TimelyUserHeader
+
+#define UserTableSize 3
+#define UserPacketSize 1
+
+#define TracedPackets ACK
+
+int send();
+int recv();
+
+#endif

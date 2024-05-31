@@ -9,6 +9,14 @@
 	#include "protocols/example/example.h"
 #elif defined DCQCN
 	#include "protocols/dcqcn/dcqcn.h"
+#elif defined TIMELY
+	#include "protocols/timely/timely.h"	
+#elif defined HPCC
+	#include "protocols/hpcc/hpcc.h"	
+#elif defined HOMA
+	#include "protocols/homa/homa.h"		
+#elif defined SWIFT
+	#include "protocols/swift/swift.h"	
 #else
 	#include "protocols/example/example.h"
 #endif
@@ -36,6 +44,7 @@ typedef enum{
     RC_ACK = 0x11,  
     CNP = 0x81,
     CE = 0x82,
+	GRANT = 0x83,
     reserve = 0xFF,
 }PkgType;
 
@@ -48,17 +57,15 @@ typedef enum {
 
 typedef struct{
 	uint credit;
-	uint rate;
-	Timer timer;
 	#ifdef UserSlots
 		UserSlots user_slots;
 	#endif
 }CCTable;
 
 typedef struct {
-	int qpn;
 	int type;
 	int length;
+	int len_log;
 	#ifdef UserHeader
 		UserHeader user_header;
 	#endif
@@ -70,7 +77,7 @@ typedef struct{
 	EventType type;
 }Event;
 
-#define BaseTableSize 3  /*CCTable:credit, rate, timer*/
+#define BaseTableSize 1  /*CCTable:credit, rate, timer*/
 #define BasePacketSize 3 /*PacketMeta: qpn, type, length*/
 
 
@@ -99,9 +106,9 @@ static inline void _write_to_csr_table(CCTable* table){
 
 static inline void _write_to_csr_packet(PacketMeta* packet){
 	uint* p = (uint*)packet;
-	#define ExpBase(i, _) WriteCSR(CSR_CCTABLE_START+sizeof(CCTable)+i, p[i]);
+	#define ExpBase(i, _) WriteCSR(CSR_CCTABLE_START+(sizeof(CCTable)/sizeof(uint))+i, p[i]);
 	EVAL(REPEAT(BasePacketSize, ExpBase, ~));
-	#define ExpUser(i, _) WriteCSR(CSR_CCTABLE_START+sizeof(CCTable)+i, p[BasePacketSize+i]);
+	#define ExpUser(i, _) WriteCSR(CSR_CCTABLE_START+(sizeof(CCTable)/sizeof(uint))+i, p[BasePacketSize+i]);
 	EVAL(REPEAT(UserPacketSize, ExpUser, ~));
 	#undef ExpBase
 	#undef ExpUser
@@ -119,9 +126,9 @@ static inline void _read_from_csr_table(CCTable* table){
 
 static inline void _read_from_csr_packet(PacketMeta* packet){
 	uint* p = (uint*)packet;
-	#define ExpBase(i, _) p[i]=ReadCSR(CSR_CCTABLE_START+sizeof(CCTable)+i);
+	#define ExpBase(i, _) p[i]=ReadCSR(CSR_CCTABLE_START+(sizeof(CCTable)/sizeof(uint))+i);
 	EVAL(REPEAT(BasePacketSize, ExpBase, ~));
-	#define ExpUser(i, _) p[BasePacketSize+i]=ReadCSR(CSR_CCTABLE_START+sizeof(CCTable)+BasePacketSize+i);
+	#define ExpUser(i, _) p[BasePacketSize+i]=ReadCSR(CSR_CCTABLE_START+(sizeof(CCTable)/sizeof(uint))+BasePacketSize+i);
 	EVAL(REPEAT(UserPacketSize, ExpUser, ~));
 	#undef ExpBase
 	#undef ExpUser
@@ -137,6 +144,12 @@ static inline void _read_from_csr(Event* e){
 	(__builtin_offsetof(CCTable, MEMBER)/sizeof(int))+CSR_CCTABLE_START,\
 	value\
 	)
+
+#define update_pkg(MEMBER, value) \
+	WriteCSR(\
+	(__builtin_offsetof(PacketMeta, MEMBER)/sizeof(int))+CSR_CCTABLE_START+(sizeof(CCTable)/sizeof(uint)),\
+	value\
+	)	
 
 static inline int poll_event_async(Event* e){
 	uint res = 0;
@@ -155,6 +168,10 @@ static inline void poll_event_sync(Event* e){
 
 static inline int has_data(PkgType type){
 	return (RC_WRITE_FIRST<=type)&&(type<=RC_READ_RESP_ONLY);
+};
+
+static inline int write_req(PkgType type){
+	return (RC_WRITE_FIRST<=type)&&(type<=RC_WRITE_ONLY_WIT_IMD);
 };
 
 void config_regs();

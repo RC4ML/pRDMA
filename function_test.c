@@ -27,8 +27,8 @@ void main() {
 	print(buffer);
 	print("%d\n", __builtin_offsetof(Event,table.credit));
 	update_table(credit, 1);
-	update_table(rate, 2);
-	update_table(timer, 3);
+	// update_table(rate, 2);
+	// update_table(timer, 3);
 
 	print("cycle:%d\n",GetTime());
 	print("cycle:%d\n",GetTime());

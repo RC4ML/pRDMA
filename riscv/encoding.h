@@ -1,7 +1,7 @@
 #ifndef __ENCODING_H__
 #define __ENCODING_H__
 
-#define CSR_MTIME 0xB00
+#define CSR_MTIME 0xc01
 
 // From 0x50-0x100
 #define CSR_CCTABLE_START 0x50
