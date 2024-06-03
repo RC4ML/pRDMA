@@ -151,6 +151,12 @@ static inline void _read_from_csr(Event* e){
 	value\
 	)	
 
+#define read_table(MEMBER, value) \
+	(value = ReadCSR((__builtin_offsetof(CCTable, MEMBER)/sizeof(int))+CSR_CCTABLE_START))
+
+#define read_pkg(MEMBER, value) \
+	(value = ReadCSR((__builtin_offsetof(PacketMeta, MEMBER)/sizeof(int))+CSR_CCTABLE_START)+(sizeof(CCTable)/sizeof(uint)))
+
 static inline int poll_event_async(Event* e){
 	uint res = 0;
 	if(SwapCSR(CSR_HAS_EVENT,res)){
@@ -165,6 +171,18 @@ static inline void poll_event_sync(Event* e){
 	}
 	_read_from_csr(e);
 };
+
+static inline int only_poll_async(){
+	uint res = 0;
+	SwapCSR(CSR_HAS_EVENT,res);
+	return res;
+}
+
+static inline void only_poll_sync(){
+	uint res = 0;
+	while(!SwapCSRI(CSR_HAS_EVENT,0)){
+	}
+}
 
 static inline int has_data(PkgType type){
 	return (RC_WRITE_FIRST<=type)&&(type<=RC_READ_RESP_ONLY);
