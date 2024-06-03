@@ -36,7 +36,7 @@ int recv(){
 	int Rc;
 	const int Rai = 5;
 	int a=1<<16 *7/8, b=1<<16*4/5;
-	int prev_rtt = 1000, new_rtt, new_rtt_diff,rtt_diff;
+	int new_rtt, new_rtt_diff,rtt_diff;
 	int gradient;
 	int tmp,tmp1;
 	Event e;
@@ -44,9 +44,10 @@ int recv(){
 		poll_event_sync(&e);
 		if(e.packet.type == RC_ACK){
 			new_rtt = GetTime() - e.packet.user_header.timestamp;
-			new_rtt_diff = new_rtt - prev_rtt;
-			prev_rtt =  new_rtt;
-			rtt_diff = fxp_mult(rtt_diff, ((1<<16)-a)) + fxp_mult(new_rtt_diff, a);
+			new_rtt_diff = new_rtt - e.table.user_slots.prev_rtt;
+			update_table(user_slots.prev_rtt, new_rtt);
+			rtt_diff = fxp_mult(e.table.user_slots.rtt_diff, ((1<<16)-a)) + fxp_mult(new_rtt_diff, a);
+			update_table(user_slots.rtt_diff,rtt_diff);
 			gradient = (rtt_diff<<16)/512;
 			if(new_rtt < T_low){
 				Rc = e.table.user_slots.rate + Rai;

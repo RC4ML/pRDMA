@@ -7,6 +7,8 @@ typedef struct{
     uint rate;
     uint timer;	
 	uint divede_rate;
+	uint prev_rtt;
+	uint rtt_diff;
 }TimelyUserSlots;
 
 typedef struct{
@@ -16,7 +18,7 @@ typedef struct{
 #define UserSlots TimelyUserSlots
 #define UserHeader TimelyUserHeader
 
-#define UserTableSize 3
+#define UserTableSize 5
 #define UserPacketSize 1
 
 #define TracedPackets ACK

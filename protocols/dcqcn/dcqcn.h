@@ -8,6 +8,12 @@ typedef struct{
     uint rate;
     uint timer;
 	uint divede_rate;
+    uint byte_count;
+    uint BC;
+    uint T;
+    uint last_time;
+    uint rt;
+    uint a;
 }DcqcnUserSlots;
 
 typedef struct{
@@ -17,7 +23,7 @@ typedef struct{
 #define UserSlots DcqcnUserSlots
 #define UserHeader DcqcnUserHeader
 
-#define UserTableSize 3
+#define UserTableSize 9
 #define UserPacketSize 1
 
 

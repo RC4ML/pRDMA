@@ -5,6 +5,13 @@
 
 typedef struct{
     uint window;
+	uint seq;
+	uint qlen;
+	uint txBytes;
+	uint ts;	
+	uint lastUpdateSeq;
+	uint incStage;
+	uint U;
 }HpccUserSlots;
 
 typedef struct{
@@ -21,7 +28,7 @@ typedef struct{
 #define UserSlots HpccUserSlots
 #define UserHeader HpccUserHeader
 
-#define UserTableSize 1
+#define UserTableSize 8
 #define UserPacketSize 8
 
 #define TracedPackets ACK
