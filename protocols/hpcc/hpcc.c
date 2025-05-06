@@ -13,16 +13,16 @@ int send(){
 	Event e;
 	while(1){
 		poll_event_sync(&e);
-		 if(has_data(e.packet.type)){
+		//  if(has_data(e.packet.type)){
 			while(e.table.credit >= e.packet.length){};
 				e.type = Send;
 				credit -= e.packet.length;
 				seq++;
 				update_table(credit,credit);
 				update_pkg(user_header.seq,seq);
-		}else{
-			e.type = Send;
-		}
+		// }else{
+		// 	e.type = Send;
+		// }
 		post_event(&e);
 	}
 }

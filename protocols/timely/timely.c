@@ -14,20 +14,24 @@ int send(){
 	int credit;
 	Event e;
 	while(1){
-		poll_event_sync(&e);
-		if(likely(has_data(e.packet.type))){
-			int time_diff = (GetTime() - e.table.user_slots.timer)<<8;
+		only_poll_sync(&e);
+		now = GetTime();
+		read_table(user_slots.timer, e.table.user_slots.timer);
+		read_table(user_slots.divede_rate, e.table.user_slots.divede_rate);
+		// read_pkg(type, e.packet.type);
+		// if(likely(has_data(e.packet.type))){
+			int time_diff = (now - e.table.user_slots.timer)<<8;
 			while(time_diff < (e.table.user_slots.divede_rate<<e.packet.len_log)){
-				time_diff = (GetTime() - e.table.user_slots.timer)<<8;
+				time_diff = (now - e.table.user_slots.timer)<<8;
 			};
 			e.type = Send;
 			// credit -= e.packet.length;
 			// update_table(credit,credit);
-			update_pkg(user_header.timestamp,GetTime());
-			update_table(user_slots.timer,GetTime());			
-		}else{
-			e.type = Send;
-		}
+			update_pkg(user_header.timestamp,now);
+			update_table(user_slots.timer,now);			
+		// }else{
+		// 	e.type = Send;
+		// }
 		post_event(&e);
 	}
 }

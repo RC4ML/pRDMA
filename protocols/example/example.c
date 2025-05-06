@@ -8,16 +8,16 @@ int send(){
 	Event e;
 	while(1){
 		poll_event_sync(&e);
-		if(has_data(e.packet.type)){
+		// if(has_data(e.packet.type)){
 			if(likely(e.table.credit >= e.packet.length)){
 				update_table(credit,e.table.credit-e.packet.length);
 				e.type = Send;
 			}else{
 				e.type = LoopBack;
 			}
-		}else{
-			e.type = Send;
-		}
+		// }else{
+		// 	e.type = Send;
+		// }
 		post_event(&e);
 	}
 }
@@ -28,8 +28,12 @@ int recv(){
 		poll_event_sync(&e);
 		if(likely(e.packet.type == RC_ACK)){
 			update_table(credit, e.table.credit+e.packet.length);
+			e.type = Done;
+		}else{
+			// update_pkg(e.packet.credit, e.packet.length);
+			update_pkg(type, RC_ACK);
+			e.type = GenTxEvent;
 		}
-		e.type = Done;
 		post_event(&e);
 	}
 	trap("End of recv");
