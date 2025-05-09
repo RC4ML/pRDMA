@@ -27,8 +27,6 @@ int send(){
 				time_diff = (GetTime() - e.table.user_slots.timer)<<8;
 			};
 			e.type = Send;
-			// credit -= e.packet.length;
-			// update_table(credit,credit);
 			update_table(user_slots.timer,GetTime());			
 		}else{
 			e.type = Send;

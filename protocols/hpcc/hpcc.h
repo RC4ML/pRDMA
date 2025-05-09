@@ -6,9 +6,12 @@
 typedef struct{
     uint window;
 	uint seq;
-	uint qlen;
-	uint txBytes;
-	uint ts;	
+	uint qlen0;
+	uint txBytes0;
+	uint ts0;	
+	uint qlen1;
+	uint txBytes1;
+	uint ts1;	
 	uint lastUpdateSeq;
 	uint incStage;
 	uint U;
@@ -16,19 +19,19 @@ typedef struct{
 
 typedef struct{
 	uint seq;
-	uint qlen;
-	uint txBytes;
-	uint ts;
+	uint qlen0;
+	uint txBytes0;
+	uint ts0;
 	uint B;
-	uint reserve0;
-	uint reserve1;
-	uint reserve2;
+	uint qlen1;
+	uint txBytes1;
+	uint ts1;	
 }HpccUserHeader;
 
 #define UserSlots HpccUserSlots
 #define UserHeader HpccUserHeader
 
-#define UserTableSize 8
+#define UserTableSize 11
 #define UserPacketSize 8
 
 #define TracedPackets ACK
